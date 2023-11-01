@@ -120,3 +120,25 @@ void main() {
 ```
 
 This code creates a list of integers and checks if a specific value (`valueToCheck`) is present in the list. You can adapt this based on your specific needs. Let me know if you have a different scenario in mind!
+
+Certainly! If you want to compare values in two lists in Dart, you can use various methods. Here's an example using sets to find common elements:
+
+```dart
+void main() {
+  List<int> list1 = [1, 2, 3, 4, 5];
+  List<int> list2 = [3, 4, 5, 6, 7];
+
+  Set<int> set1 = Set.from(list1);
+  Set<int> set2 = Set.from(list2);
+
+  Set<int> commonElements = set1.intersection(set2);
+
+  if (commonElements.isNotEmpty) {
+    print('Common elements: $commonElements');
+  } else {
+    print('No common elements.');
+  }
+}
+```
+
+This code creates two lists and then converts them into sets to find the common elements. If there are common elements, it prints them; otherwise, it indicates that there are none. Let me know if you have a specific requirement in mind!
