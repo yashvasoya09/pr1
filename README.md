@@ -101,3 +101,22 @@ class _MyHomePageState extends State<MyHomePage> {
 ```
 
 This example uses the `speech_to_text` package, providing a simple button to start and stop speech recognition. Remember to handle permissions and customize the code according to your application's requirements.
+
+
+
+Certainly! Here's a simple example in Dart, the language used in Flutter, to check if a list contains a specific value:
+
+```dart
+void main() {
+  List<int> numbers = [1, 2, 3, 4, 5];
+  int valueToCheck = 3;
+
+  if (numbers.contains(valueToCheck)) {
+    print('$valueToCheck is in the list.');
+  } else {
+    print('$valueToCheck is not in the list.');
+  }
+}
+```
+
+This code creates a list of integers and checks if a specific value (`valueToCheck`) is present in the list. You can adapt this based on your specific needs. Let me know if you have a different scenario in mind!
