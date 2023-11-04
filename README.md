@@ -142,3 +142,99 @@ void main() {
 ```
 
 This code creates two lists and then converts them into sets to find the common elements. If there are common elements, it prints them; otherwise, it indicates that there are none. Let me know if you have a specific requirement in mind!
+
+
+Certainly! First, add the `firebase_ml_vision` package to your `pubspec.yaml` file:
+
+```yaml
+dependencies:
+  firebase_ml_vision: ^0.12.0
+```
+
+Then, run `flutter pub get` in your terminal.
+
+Now, you can use the following example code to perform OCR using Firebase ML Kit in Flutter:
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:firebase_ml_vision/firebase_ml_vision.dart';
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: MyHomePage(),
+    );
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  String recognizedText = 'OCR Result will appear here';
+
+  Future<void> readText() async {
+    final FirebaseVisionImage visionImage = FirebaseVisionImage.fromFilePath(
+      'path_to_your_image', // Replace with the path to your image file
+    );
+
+    final TextRecognizer textRecognizer = FirebaseVision.instance.textRecognizer();
+    final VisionText visionText = await textRecognizer.processImage(visionImage);
+
+    String text = '';
+
+    for (TextBlock block in visionText.blocks) {
+      for (TextLine line in block.lines) {
+        for (TextElement element in line.elements) {
+          text += element.text + ' ';
+        }
+        text += '\n'; // Newline after each line
+      }
+    }
+
+    textRecognizer.close();
+
+    setState(() {
+      recognizedText = text;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('OCR Scanner'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Image.asset(
+              'assets/your_image.png', // Replace with the path to your image asset
+              height: 200,
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: readText,
+              child: Text('Read Text'),
+            ),
+            SizedBox(height: 20),
+            Text(
+              recognizedText,
+              style: TextStyle(fontSize: 16),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+Make sure to replace 'path_to_your_image' and 'assets/your_image.png' with the actual path to your image file. This example provides a basic Flutter app with a button to trigger OCR and display the recognized text.
