@@ -238,3 +238,87 @@ class _MyHomePageState extends State<MyHomePage> {
 ```
 
 Make sure to replace 'path_to_your_image' and 'assets/your_image.png' with the actual path to your image file. This example provides a basic Flutter app with a button to trigger OCR and display the recognized text.
+
+
+......
+
+Certainly! Here's a simple example using the `speech_to_text` and `langid` packages in Flutter:
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
+import 'package:langid/langid.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: SpeechToTextExample(),
+    );
+  }
+}
+
+class SpeechToTextExample extends StatefulWidget {
+  @override
+  _SpeechToTextExampleState createState() => _SpeechToTextExampleState();
+}
+
+class _SpeechToTextExampleState extends State<SpeechToTextExample> {
+  stt.SpeechToText _speech = stt.SpeechToText();
+  String _transcription = '';
+
+  void _listen() async {
+    if (await _speech.initialize()) {
+      _speech.listen(
+        onResult: (result) {
+          setState(() {
+            _transcription = result.recognizedWords;
+          });
+
+          // Detect language using langid
+          String language = await LangID.detectLanguage(_transcription);
+          print('Detected Language: $language');
+        },
+      );
+    } else {
+      print('Speech recognition not available');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Speech to Text & Language Detection'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text('Transcription: $_transcription'),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _listen,
+              child: Text('Start Listening'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+Make sure to add the required dependencies in your `pubspec.yaml` file:
+
+```yaml
+dependencies:
+  speech_to_text: ^5.0.1
+  langid: ^0.2.0
+```
+
+This example sets up a Flutter app with a button to start speech recognition, transcribes the speech to text, and then uses `langid` to detect the language of the transcribed text.
