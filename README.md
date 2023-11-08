@@ -322,3 +322,107 @@ dependencies:
 ```
 
 This example sets up a Flutter app with a button to start speech recognition, transcribes the speech to text, and then uses `langid` to detect the language of the transcribed text.
+
+
+,,,,,
+To transliterate text from various languages written in the Latin alphabet, you can use the `flutter_quill` package combined with language-specific transliteration libraries or APIs. However, keep in mind that the quality of transliteration may vary depending on the language.
+
+Here's an example using the `indic_transliteration` package for Hindi and `googleapis` for other languages:
+
+1. Add the dependencies to your `pubspec.yaml` file:
+
+```yaml
+dependencies:
+  flutter_quill: ^2.0.0
+  indic_transliteration: ^1.0.0
+  googleapis: ^4.0.0
+  googleapis_translate_v2: ^0.9.0
+  http: ^0.13.3
+```
+
+2. Update your code:
+
+```dart
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:flutter_quill/flutter_quill.dart' as quill;
+import 'package:indic_transliteration/indic_transliteration.dart';
+import 'package:googleapis_translate_v2/googleapis_translate_v2.dart' as translate;
+import 'package:http/http.dart' as http;
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        body: Center(
+          child: MyQuillEditor(),
+        ),
+      ),
+    );
+  }
+}
+
+class MyQuillEditor extends StatefulWidget {
+  @override
+  _MyQuillEditorState createState() => _MyQuillEditorState();
+}
+
+class _MyQuillEditorState extends State<MyQuillEditor> {
+  quill.QuillController _controller = quill.QuillController.basic();
+
+  @override
+  Widget build(BuildContext context) {
+    return quill.QuillEditor(
+      controller: _controller,
+      readOnly: true,
+      expands: false,
+      autoFocus: false,
+      placeholder: 'Type something...',
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    translateToEnglish('नमस्ते'); // Hindi
+    translateToEnglish('こんにちは'); // Japanese
+    translateToEnglish('مرحبا'); // Arabic
+  }
+
+  Future<void> translateToEnglish(String text) async {
+    String englishText;
+
+    // Hindi transliteration
+    if (quill.HindiScriptDetector().hasScript(text)) {
+      englishText = IndicScript.transliterate(text, to: Language.english);
+    } else {
+      // Google Translate API for other languages
+      final apiKey = 'YOUR_GOOGLE_TRANSLATE_API_KEY';
+      final targetLanguage = 'en';
+
+      final client = http.Client();
+      final translator = translate.TranslateApi(client, apiKey);
+
+      final translation = await translator.translations.list(
+        [text],
+        target: targetLanguage,
+      );
+
+      englishText = translation.translations.first.translatedText;
+      client.close();
+    }
+
+    _controller.replaceText(0, _controller.document.length, englishText);
+  }
+}
+```
+
+Replace `'YOUR_GOOGLE_TRANSLATE_API_KEY'` with your actual Google Translate API key.
+
+This example uses the `indic_transliteration` package for Hindi transliteration and the Google Translate API for other languages. Adjust the target languages and handling based on your specific use case.
